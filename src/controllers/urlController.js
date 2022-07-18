@@ -11,8 +11,8 @@ const shortUrl = async function (req, res) {
 
         if (!validUrl.isUri(url)) return res.status(404).send({ status: false, message: "Invalid Url" })
 
-        let checkUrl= await urlModel .findOne({longUrl:url})
-        if(checkUrl) return res.status(400).send({status:false,message:"This Url is already shortened"})
+        // let checkUrl= await urlModel .findOne({longUrl:url})
+        // if(checkUrl) return res.status(400).send({status:false,message:"This Url is already shortened"})
 
         let urlCode = shortId.generate()
         let shortUrl = baseUrl + "/" + urlCode
