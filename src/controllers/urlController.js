@@ -8,21 +8,25 @@ const shortUrl = async function (req, res) {
         let url = req.body.longUrl
 
         if(!url) return res.status(400).send({status:false,message:"Please Provide Url"})
-
         if (!validUrl.isUri(url)) return res.status(404).send({ status: false, message: "Invalid Url" })
 
-        let checkUrl= await urlModel .findOne({longUrl:url})
-        if(checkUrl) return res.status(400).send({status:false,message:"This Url is already shortened"})
+        let checkUrl= await urlModel .findOne({longUrl:url}).select({ _id: 0, __v: 0 })
 
-        let urlCode = shortId.generate()
-        let shortUrl = baseUrl + "/" + urlCode
-        const saveData = await urlModel.create({
-            longUrl: url,
-            shortUrl: shortUrl,
-            urlCode: urlCode
-        })
-        let saveData1 = await urlModel.findById(saveData._id).select({ _id: 0, __v: 0 })
-        res.status(201).send({ status: true, data: saveData1 })
+        if(!checkUrl){
+            let urlCode = shortId.generate()
+            let shortUrl = baseUrl + "/" + urlCode
+            const saveData = await urlModel.create({
+                longUrl: url,
+                shortUrl: shortUrl,
+                urlCode: urlCode
+            })
+            let saveData1 = await urlModel.findById(saveData._id).select({ _id: 0, __v: 0 })
+            res.status(201).send({ status: true, data: saveData1 })
+        }
+        else{
+            res.status(200).send({ status: true, data: checkUrl })
+        }
+       
     }
     catch (err) {
         res.status(500).send({ status: false, message: err.mesaage })
