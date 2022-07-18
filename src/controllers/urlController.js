@@ -2,6 +2,11 @@ const validUrl = require("valid-url")
 const shortId = require("shortid")
 const urlModel = require("../model/urlModel")
 
+// const isValidUrl = function(value){
+//  let reg="/(http(s)?:\/\/.)?(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)/";
+//  return reg.test(value)
+// }
+
 const shortUrl = async function (req, res) {
     try {
         let baseUrl = "http://localhost:3000"
@@ -10,6 +15,7 @@ const shortUrl = async function (req, res) {
         if(!url) return res.status(400).send({status:false,message:"Please Provide Url"})
         if (!validUrl.isUri(url)) return res.status(404).send({ status: false, message: "Invalid Url" })
 
+        // if(!isValidUrl(url)) return res.status(400).send({status:false,message:"Invalid Url"})
         let checkUrl= await urlModel .findOne({longUrl:url}).select({ _id: 0, __v: 0 })
 
         if(!checkUrl){
