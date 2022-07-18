@@ -1,5 +1,5 @@
 const validUrl=require("valid-url")
-const shortid=require("shortid")
+const shortId=require("shortid")
 const urlModel = require("../model/urlModel")
 
 const shortUrl=async function(req,res){
@@ -8,17 +8,18 @@ try{
 
     let url=req.body.longUrl
 
-    // if (!validUrl.isUri(suspect)) return 
+    if (!validUrl.isUri(url)) return res.status(404).send({status:false, message:"url is not valid"}) 
 
 
-    let shortId=shortid.generate()
 
-    let shortUrl=baseUrl + "/" +shortId
+    let urlCode=shortId.generate()
+
+    let shortUrl=baseUrl + "/" +urlCode
 
     const saveData=await urlModel.create({
         longUrl:url,
         shortUrl:shortUrl,
-        urlCode:shortId
+        urlCode:urlCode
     })
     let saveData1=await urlModel.findById(saveData._id).select({_id:0,__v:0})
     res.status(201).send({status:true, data:saveData1})
