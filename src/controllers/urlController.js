@@ -31,15 +31,15 @@ const GET_ASYNC = promisify(redisClient.GET).bind(redisClient);
 const shortUrl = async function (req, res) {
     try {
         let baseUrl = "http://localhost:3000"
-        let url = req.body.longUrl.trim()
+        let url = req.body.longUrl
 
-        if(!url) return res.status(400).send({status:false,message:"Please Provide Url"})
-        if (!validUrl.isUri(url)) return res.status(404).send({ status: false, message: "Invalid Url" })
+        if(Object.keys(req.body)==0 || !url) return res.status(400).send({status:false,message:"Please Provide Url"})
+        if (!validUrl.isUri(url.trim())) return res.status(404).send({ status: false, message: "Invalid Url" })
 
-        let checkUrl= await urlModel .findOne({longUrl:url}).select({ _id: 0, __v: 0 })
+        let cahcedUrl = await GET_ASYNC(`${url}`)
 
-        if(!checkUrl){
-            let urlCode = shortId.generate()
+        if(!cahcedUrl){
+            let urlCode = shortId.generate(url).toLowerCase()
             let shortUrl = baseUrl + "/" + urlCode
             const saveData = await urlModel.create({
                 longUrl: url,
@@ -47,10 +47,12 @@ const shortUrl = async function (req, res) {
                 urlCode: urlCode
             })
             let saveData1 = await urlModel.findById(saveData._id).select({ _id: 0, __v: 0 })
-            res.status(201).send({ status: true, data: saveData1 })
+            await SET_ASYNC(`${url}`, JSON.stringify(saveData1))
+            return res.status(201).send({ status: true, data: saveData1 })
         }
         else{
-            res.status(200).send({ status: true, data: checkUrl })
+            let urlData= JSON.parse(cahcedUrl)
+            return res.status(200).send({ status: true, data: urlData })
         }
     }
     catch (err) {
