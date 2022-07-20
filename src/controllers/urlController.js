@@ -68,18 +68,16 @@ module.exports.shortUrl = shortUrl
 const redirect = async function (req, res) {
     try {
         let urlCode = req.params.urlCode
-        let cachedData = await GET_ASYNC(urlCode)
-        let getLongUrl = JSON.parse(cachedData)
-        // console.log(getLongUrl)
-
-        let longUrl=getLongUrl.longUrl
+    
+        let cachedData = await GET_ASYNC(`${urlCode}`)
+      
         if(cachedData) {
-          return res.redirect(302,longUrl)
-        } 
-        else {
+          let getLongUrl = JSON.parse(cachedData)
+          return res.redirect(302,getLongUrl.longUrl)
+        } else {
             let urlData = await urlModel.findOne({ urlCode: urlCode })
-            await SET_ASYNC(`${urlCode}`, JSON.stringify(urlData))
             if (!urlData) return res.status(404).send({ status: false, message: "No url found" })
+            await SET_ASYNC(`${urlCode}`, JSON.stringify(urlData))
             let longUrl = urlData.longUrl
             return res.redirect(302,longUrl)
         }
