@@ -33,12 +33,15 @@ const shortUrl = async function (req, res) {
         let baseUrl = "http://localhost:3000"
         let url = req.body.longUrl
 
-        if(Object.keys(req.body)==0 || !url) return res.status(400).send({status:false,message:"Please Provide Url"})
-        if (!validUrl.isUri(url.trim())) return res.status(404).send({ status: false, message: "Invalid Url" })
+        if(Object.keys(req.body)==0 || !url || typeof(url)!="string") return res.status(400).send({status:false,message:"Please Provide Url"})
 
-        let cahcedUrl = await GET_ASYNC(`${url}`)
+        url=url.trim()
+        
+        if (!validUrl.isUri(url)) return res.status(404).send({ status: false, message: "Invalid Url" })
 
-        if(!cahcedUrl){
+        let cachedUrl = await GET_ASYNC(`${url}`)
+
+        if(!cachedUrl){
             let urlCode = shortId.generate(url).toLowerCase()
             let shortUrl = baseUrl + "/" + urlCode
             const saveData = await urlModel.create({
@@ -51,7 +54,7 @@ const shortUrl = async function (req, res) {
             return res.status(201).send({ status: true, data: saveData1 })
         }
         else{
-            let urlData= JSON.parse(cahcedUrl)
+            let urlData= JSON.parse(cachedUrl)
             return res.status(200).send({ status: true, data: urlData })
         }
     }
