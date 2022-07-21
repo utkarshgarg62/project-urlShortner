@@ -37,7 +37,7 @@ const shortUrl = async function (req, res) {
 
         url=url.trim()
 
-        if (!validUrl.isUri(url)) return res.status(404).send({ status: false, message: "Invalid Url" })
+        if (!validUrl.isUri(url)) return res.status(400).send({ status: false, message: "Invalid Url" })
 
         let cachedUrl = await GET_ASYNC(`${url}`)
 
@@ -50,7 +50,7 @@ const shortUrl = async function (req, res) {
                 urlCode: urlCode
             })
             let saveData1 = await urlModel.findById(saveData._id).select({ _id: 0, __v: 0 })
-            await SET_ASYNC(`${url}`,20, JSON.stringify(saveData1))
+            await SET_ASYNC(`${url}`,3600, JSON.stringify(saveData1))
             return res.status(201).send({ status: true, data: saveData1 })
         }
         else{
@@ -80,7 +80,7 @@ const redirect = async function (req, res) {
         } else {
             let urlData = await urlModel.findOne({ urlCode: urlCode })
             if (!urlData) return res.status(404).send({ status: false, message: "No url found" })
-            await SET_ASYNC(`${urlCode}`,20, JSON.stringify(urlData))
+            await SET_ASYNC(`${urlCode}`,3600, JSON.stringify(urlData))
             let longUrl = urlData.longUrl
             return res.redirect(302,longUrl)
         }
