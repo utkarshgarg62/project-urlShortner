@@ -8,11 +8,11 @@ const { promisify } = require("util");
 
 //Connect to redis
 const redisClient = redis.createClient(
-    12894,
-    "redis-12894.c301.ap-south-1-1.ec2.cloud.redislabs.com",
+    12894,   //port
+    "redis-12894.c301.ap-south-1-1.ec2.cloud.redislabs.com",  //public endpoint
     { no_ready_check: true }
 );
-redisClient.auth("w0xgYCw0xpqkaaMXMAUyTtYoArA06B56", function (err) {
+redisClient.auth("w0xgYCw0xpqkaaMXMAUyTtYoArA06B56", function (err) {  //password
   if (err) throw err;
 });
 
@@ -37,7 +37,7 @@ const shortUrl = async function (req, res) {
 
         url=url.trim()
 
-        if (!validUrl.isUri(url)) return res.status(400).send({ status: false, message: "Invalid Url" })
+        if (!validUrl.isWebUri(url)) return res.status(400).send({ status: false, message: "Invalid Url" })
 
         let checkedUrl=await urlModel.findOne({longUrl:url}).select({ _id: 0, __v: 0 })
 
