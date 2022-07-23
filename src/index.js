@@ -9,7 +9,7 @@ app.use(bodyParser.json());
 
 //===================================================[Data-Base Connection]=================================================================
 
-mongoose.connect("mongodb+srv://lavverma:8573007234@cluster0.hdldl.mongodb.net/group23Database?retryWrites=true&w=majority", { 
+mongoose.connect("mongodb+srv://functionup-radon-cohort:radon123@cluster0.zbsotuc.mongodb.net/group23Database?retryWrites=true&w=majority", { 
     useNewUrlParser: true
 })
 .then( () => console.log("MongoDb is connected succsessfully"))
