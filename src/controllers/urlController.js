@@ -8,11 +8,11 @@ const { promisify } = require("util");
 
 //Connect to redis
 const redisClient = redis.createClient(
-    12894,   //port
-    "redis-12894.c301.ap-south-1-1.ec2.cloud.redislabs.com",  //public endpoint
+    14142,   //port
+    "redis-14142.c264.ap-south-1-1.ec2.cloud.redislabs.com",  //public endpoint
     { no_ready_check: true }
 );
-redisClient.auth("w0xgYCw0xpqkaaMXMAUyTtYoArA06B56", function (err) {  //password
+redisClient.auth("y16dKTbIMtRh1IOz41hmOkfSWAKhY12N", function (err) {  //password
   if (err) throw err;
 });
 
